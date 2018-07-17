@@ -44,7 +44,7 @@ export default [
         page: DetailPackagePage
     },
     {
-        path: '/login',
+        path: '/login/:contractAdress',
         page: LoginPage
     },
     {
