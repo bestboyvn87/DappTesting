@@ -11,7 +11,7 @@ export default class extends StandardPage {
             <div>
                 <div className="p_login ebp-wrap" >
                     <Col span={24} style={{marginTop:'100px'}}>
-                        <LoginForm />
+                        <LoginForm contractAdress={this.props.match.params.contractAdress} />
 
                     </Col>
 

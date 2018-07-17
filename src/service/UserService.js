@@ -6,7 +6,7 @@ import {WEB3} from '@/constant'
 
 export default class extends BaseService {
 
-    async decryptWallet(privatekey, opts={}){
+    async decryptWallet(privatekey, contractAdress){
         const userRedux = this.store.getRedux('user')
 
         let web3 = new Web3(new Web3.providers.HttpProvider(WEB3.HTTP))
