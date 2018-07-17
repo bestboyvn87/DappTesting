@@ -12,6 +12,8 @@ export const WEB3 = {
     ACCOUNT : '0xf55cee858b3b677f95887f8b480d43a3b6ed1b36'
 }
 
+//To change WEB3 ABI ADDRESS
+
 export const USER_LANGUAGE = {
     en: 'en',
     zh: 'zh'
