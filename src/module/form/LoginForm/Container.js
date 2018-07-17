@@ -22,7 +22,7 @@ export default createContainer(Component, (state)=>{
 
                 if (rs) {
                     message.success('Login successfully')
-                    userService.path.push('/dashboard')
+                    userService.path.push('/pool') //// Redirect page after loged in
                 }
             } catch (err) {
                 message.destroy()
