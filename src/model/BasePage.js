@@ -52,9 +52,9 @@ export default class extends BaseComponent {
 
     ord_checkLogin(isLogin, isAdmin) {
         let url = window.location.pathname;
-
+        const contract = sessionStorage.getItem('contract-adress')
         if (!isLogin && url !== '/user-guide') {
-            return this.props.history.replace('/login');
+            return this.props.history.replace(`/login/${contract}`);
         }
     }
 }

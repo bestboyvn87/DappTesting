@@ -45,23 +45,6 @@ const render = () => {
     );
 };
 
-if(sessionStorage.getItem('api-token')){
-    const userRedux = store.getRedux('user');
-    api_request({
-        path : '/user/current_user',
-        success : (data)=>{
-            store.dispatch(userRedux.actions.is_login_update(true));
-            if ([USER_ROLE.ADMIN, USER_ROLE.COUNCIL].includes(data.role)) {
-                store.dispatch(userRedux.actions.is_admin_update(true))
-            }
-            store.dispatch(userRedux.actions.profile_update(data.profile))
-            store.dispatch(userRedux.actions.role_update(data.role))
-
-            render()
-        }
-    });
-}
-else{
     render();
-}
+
 

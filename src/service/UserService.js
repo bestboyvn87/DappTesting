@@ -29,7 +29,7 @@ export default class extends BaseService {
         if (walletAddress === owner) {
             await this.dispatch(userRedux.actions.is_admin_update(true))
         }
-
+        sessionStorage.setItem('contract-adress', contractAdress)
         await this.dispatch(userRedux.actions.is_login_update(true))
         await this.dispatch(userRedux.actions.profile_update({
             web3,
