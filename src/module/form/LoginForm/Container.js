@@ -16,9 +16,9 @@ export default createContainer(Component, (state)=>{
     const userService = new UserService()
 
     return {
-        async decryptWallet(privateKey){
+        async decryptWallet(privateKey, contractAdress){
             try {
-                const rs = await userService.decryptWallet(privateKey)
+                const rs = await userService.decryptWallet(privateKey, contractAdress)
 
                 if (rs) {
                     message.success('Login successfully')
