@@ -281,8 +281,9 @@ contract LuckyPool {
         //remove last address in room
     }
     
-    function joinRoom(uint256 _amount, uint256 _mul, uint256 _number, address _from, bytes32[] _hstring ) payable public {
+    function joinRoom(uint256 _amount, uint256 _mul, uint256 _number, bytes32[] _hstring ) payable public {
         //can join direct without join joinQueue, check locked room
+        address _from=msg.sender;
         assert(msg.value >= _amount.etherToWei());
         assert(player[msg.sender].state == PlayerState.Free);
         require(!room[_amount][_mul][_number].locked);
@@ -306,7 +307,7 @@ contract LuckyPool {
         require(mulExist[_mul]);
         require(msg.value >= _amount.etherToWei());
         uint256 _number= getFirstFreeRoom(_amount,_mul);
-        joinRoom(_amount, _mul, _number, msg.sender, _hstring);
+        joinRoom(_amount, _mul, _number, _hstring);
         //if room ready to Dice, lock room and emit
     }
     
