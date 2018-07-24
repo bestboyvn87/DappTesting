@@ -5,9 +5,12 @@ import './SafeMath.sol';
 contract LuckyPool {
     using SafeMath for uint256;
     
-    uint256 public constant DICE_DURATION = 30;
-    uint256 public constant REFUND_PERCENT = 100;
-    uint256 public constant REWARD_PERCENT = 98;
+    uint256 public constant DICE_DURATION= 20;
+    uint256 public constant REFUND_PERCENT= 98;
+    uint256 public constant REWARD_PERCENT= 98;
+    uint256 public constant INACTIVE_DURATION= 60*60*24; //24 hours inactive room, locked but nobody calls getWinner() 
+
+    uint256 public pendingAmount= 0;
 
     enum PlayerState {
         Free,
@@ -62,7 +65,7 @@ contract LuckyPool {
     }
     
 //Events
-    event ownerWithdrawSuccess();
+    event ownerWithdrawSuccess(uint256 _withdrawAmount);
     event roomLocked(uint256 _amount, uint256 _mul, uint256 _number);
     event freeRoom(uint256 _amount, uint256 _mul, uint256 _number);
     event joinSuccess(address _from);
@@ -141,8 +144,26 @@ contract LuckyPool {
     }
 
     function ownerWithdraw() public onlyOwner { //tested
-        owner.transfer(address(this).balance);
-        emit ownerWithdrawSuccess();
+        cleanInactiveRooms();
+        uint256 withdrawAmount= address(this).balance.sub(pendingAmount);
+        owner.transfer(withdrawAmount);
+        emit ownerWithdrawSuccess(withdrawAmount);
+    }
+
+//to clean Rooms, that nobody claim reward
+    function cleanInactiveRooms() public onlyOwner {
+        for (uint256 i= 0; i < betAmount.length; i++)
+        for (uint256 j= 0; j < betMul.length; j++) {
+            uint256 _amount= betAmount[i];
+            uint256 _mul= betMul[j];        
+            for (uint256 _number= 0; _number < roomNumber[_amount][_mul]; _number++){
+                uint256 endTime= room[_amount][_mul][_number].endTime;
+                bool isLocked= room[_amount][_mul][_number].locked;
+                if ((isLocked) && (now.sub(endTime) > INACTIVE_DURATION)) {
+                    cleanRoom(_amount, _mul, _number);
+                }
+            }
+        }
     }
 
     function() payable public { } //fallback function
@@ -239,9 +260,12 @@ contract LuckyPool {
         //require((now.sub(endTime) > DICE_DURATION) || (didAllVerify(roomId.amount,roomId.mul,roomId.number))); 
         require(now.sub(endTime) > DICE_DURATION);
         address winnerAddress= fighting(room[roomId.amount][roomId.mul][roomId.number].playerAddress);
+        bool nobodyVerified= (player[winnerAddress].state != PlayerState.Verified);
         uint256 reward= roomId.amount.mul(roomId.mul).etherToWei().div(100).mul(REWARD_PERCENT);
-        winnerAddress.transfer(reward);
-        emit winnerNotify(winnerAddress);
+        if (!nobodyVerified) {
+            winnerAddress.transfer(reward);
+            emit winnerNotify(winnerAddress);
+        } else emit loserNotify(winnerAddress, 0);
         cleanRoom(roomId.amount, roomId.mul, roomId.number);
         emit freeRoom(roomId.amount, roomId.mul, roomId.number);
     }
@@ -250,13 +274,14 @@ contract LuckyPool {
         player[playerAddress].state= PlayerState.Free;
         delete player[playerAddress].hstring;
         delete player[playerAddress].randomNumbers;
+        pendingAmount.sub(player[playerAddress].inRoom.amount.etherToWei());
     }
     
     function cleanRoom(uint256 _amount, uint256 _mul, uint256 _number) private {
         room[_amount][_mul][_number].endTime= now;
         room[_amount][_mul][_number].locked= false;
         address[] storage pList= room[_amount][_mul][_number].playerAddress;
-        for (uint256 i= 0; i<pList.length; i++) freePlayer(pList[i]);
+        for (uint256 i= 0; i < pList.length; i++) freePlayer(pList[i]);
         delete room[_amount][_mul][_number].playerAddress;
     }
     
@@ -298,6 +323,7 @@ contract LuckyPool {
         
         room[_amount][_mul][_number].playerAddress.push(_from);
         emit joinSuccess(_from);
+        pendingAmount.add(_amount.etherToWei());
         
         if (_order == _mul-1) lockRoom(_amount, _mul, _number);
     }
