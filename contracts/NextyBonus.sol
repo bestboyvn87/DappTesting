@@ -103,7 +103,7 @@ contract NextyBonus {
     function addMember(address _address) onlyOwner public {
         require(!member[_address].exist);
         totalMember++;
-        addressList[totalMember]= _address;
+        addressList.push(_address);
         member[_address].exist= true;
         member[_address].id= totalMember;
         LogAtribute memory newLog;
