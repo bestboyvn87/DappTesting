@@ -30,7 +30,6 @@ contract NextyBonus {
     
     struct LogAtribute {
         ActionType action;
-        address memberAddress;
         uint256 value;
         uint256 time;
         uint256 endTime;
@@ -109,7 +108,6 @@ contract NextyBonus {
         member[_address].id= totalMember;
         LogAtribute memory newLog;
         newLog.action = ActionType.AddMember;
-        newLog.memberAddress= _address;
         newLog.value= totalMember;
         newLog.time= now;
         newLog.status= true;
@@ -122,7 +120,6 @@ contract NextyBonus {
         totalAmount.sub(_amount);
         LogAtribute memory newLog;
         newLog.action= ActionType.GiveBonus;
-        newLog.memberAddress= _to;
         newLog.value= _amount;
         newLog.time= now;
         newLog.endTime= now.add(BONUS_LOCK_DURATION);
@@ -136,7 +133,6 @@ contract NextyBonus {
         totalAmount.sub(_amount);
         LogAtribute memory newLog;
         newLog.action= ActionType.GiveFixed;
-        newLog.memberAddress= _to;
         newLog.value= _amount;
         newLog.time= now;
         newLog.endTime= CONTRACT_ENDTIME;
@@ -157,7 +153,6 @@ contract NextyBonus {
         
         LogAtribute memory newLog;
         newLog.action= ActionType.GetBack;
-        newLog.memberAddress= _from;
         newLog.value= getBackTotal;
         newLog.time= now;
         newLog.endTime= CONTRACT_ENDTIME;
@@ -183,7 +178,6 @@ contract NextyBonus {
         
         LogAtribute memory newLog;
         newLog.action= ActionType.Withdraw;
-        newLog.memberAddress= _address;
         newLog.value= unlockedAmount;
         newLog.time= now;
         newLog.endTime= CONTRACT_ENDTIME;
