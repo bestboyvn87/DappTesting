@@ -116,7 +116,7 @@ contract NextyBonus {
     }
     
     function giveBonus(address _to, uint256 _amount) onlyOwner public payable {
-        require(address(this).balance >=  _amount);
+        require(totalAmount >=  _amount);
         totalAmount.sub(_amount);
         LogAtribute memory newLog;
         newLog.action= ActionType.GiveBonus;
@@ -129,7 +129,7 @@ contract NextyBonus {
     }
     
     function giveFixed(address _to, uint256 _amount) onlyOwner public {
-        require(address(this).balance >=  _amount);
+        require(totalAmount >=  _amount);
         totalAmount.sub(_amount);
         LogAtribute memory newLog;
         newLog.action= ActionType.GiveFixed;
