@@ -82,11 +82,15 @@ contract NextyBonus {
     }
     
     function () public payable {
-        totalAmount.add(msg.value);
+        totalAmount= totalAmount.add(msg.value);
     }
     
     function deposit() public payable {
-        totalAmount.add(msg.value);
+        totalAmount= totalAmount.add(msg.value);
+    }
+    
+    function getTotalAmount() public onlyOwner view returns (uint256){
+        return this.balance;
     }
     
     function ownerWithdraw(uint256 _amount) onlyOwner public {
